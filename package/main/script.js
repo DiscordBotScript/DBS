@@ -88,6 +88,7 @@ class Dbotjs {
                      fs.writeFileSync((process.argv[1] || process.cwd()) +'/db/Users.json', JSON.stringify([]), () => { })
                      fs.writeFileSync((process.argv[1] || process.cwd()) +'/db/Channels.json', JSON.stringify([]), () => { })
                      fs.writeFileSync((process.argv[1] || process.cwd()) +'/db/Messages.json', JSON.stringify([]), () => { })
+                     fs.writeFileSync((process.argv[1] || process.cwd()) +'/db/Cooldowns.json', JSON.stringify([]), () => { })
                 }
               })
             this.dbFile = (process.argv[1] || process.cwd()) +'/db';
