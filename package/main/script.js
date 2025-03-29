@@ -3,9 +3,11 @@ import fs from 'fs';
 import { readdir } from 'fs/promises';
 import chalk from 'chalk';
 //import moment from 'moment';
+import data from "better-sqlite3"
 import path from "path"
 import { fileURLToPath, pathToFileURL } from 'url';
-
+let exists 
+let db
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const events = {}; 
@@ -77,21 +79,19 @@ class Dbotjs {
         this.client.ReadyCommand = new Collection();
         this.client.MsgDeleteCommand = new Collection();
         this.fs = fs
+        
 
 
         this.client.on("ready", () => {
-                fs.lstat((process.argv[1] || process.cwd()) +'/db', async (err) => {  //creates db files if not existent yet
-                if(err) {
-                     fs.mkdirSync((process.argv[1] || process.cwd()) +'/db');
-                     fs.writeFileSync((process.argv[1] || process.cwd()) +'/db/Base.json', JSON.stringify([]), () => { })
-                     fs.writeFileSync((process.argv[1] || process.cwd()) +'/db/Servers.json', JSON.stringify([]), () => { })
-                     fs.writeFileSync((process.argv[1] || process.cwd()) +'/db/Users.json', JSON.stringify([]), () => { })
-                     fs.writeFileSync((process.argv[1] || process.cwd()) +'/db/Channels.json', JSON.stringify([]), () => { })
-                     fs.writeFileSync((process.argv[1] || process.cwd()) +'/db/Messages.json', JSON.stringify([]), () => { })
-                     fs.writeFileSync((process.argv[1] || process.cwd()) +'/db/Cooldowns.json', JSON.stringify([]), () => { })
-                }
-              })
-            this.dbFile = (process.argv[1] || process.cwd()) +'/db';
+            fs.access('file', err => err ? exists = "true" : exists = "false")
+            if(exists = "false") { 
+            db = new data('database.db') 
+            db.exec(`CREATE TABLE IF NOT EXISTS base ( name TEXT, value TEXT)`);
+            db.exec(`CREATE TABLE IF NOT EXISTS users ( name TEXT, value TEXT)`);
+            db.exec(`CREATE TABLE IF NOT EXISTS guilds ( name TEXT, value TEXT)`);
+            db.exec(`CREATE TABLE IF NOT EXISTS channels ( name TEXT, value TEXT, type TEXT)`);
+            }
+             this.db = db
              this.isReady = true;
             console.log(chalk.green('[Dbot.js] Logged in as ' + this.client.user.tag));
             if (this.client.ReadyCommand.size) {
